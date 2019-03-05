@@ -30,6 +30,14 @@ def main():
     graph.add_directed_edge('4', '6')
     print(graph.vertices)
 
+    # Added test stuff
+    print("Iterative BFT")
+    graph.bft("4")
+    print("Iterative DFT")
+    graph.dft("4")
+    print("Recursive DFT")
+    graph.dft_rec("4")
+
 
 if __name__ == '__main__':
     # TODO - parse argv

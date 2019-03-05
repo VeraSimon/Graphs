@@ -41,7 +41,7 @@ class Graph:
             # If that node has not been visted...
             if v not in visited:
                 # Mark it as visited
-                # print(v)
+                print(v)
                 visited.add(v)
                 # Then, put all of it's children into the queue
                 for neighbor in self.vertices[v]:
@@ -61,8 +61,34 @@ class Graph:
             # If that node has not been visted...
             if v not in visited:
                 # Mark it as visited
-                # print(v)
+                print(v)
                 visited.add(v)
                 # Then, put all of it's children into the stack
                 for neighbor in self.vertices[v]:
                     s.append(neighbor)
+
+    def dft_rec(self, node):
+        s = deque()
+        visited = set()
+        s.append(node)
+
+        def depth_recursion():
+            if len(s) <= 0:
+                return
+
+            vert = s.pop()
+            if not vert in visited:
+                print(vert)
+                visited.add(vert)
+                for peer in self.vertices[vert]:
+                    s.append(peer)
+
+            depth_recursion()
+
+        depth_recursion()
+
+    def bfs(self, start_node, dest_node):
+        pass
+
+    def dfs(self, start_node, dest_node):
+        pass
