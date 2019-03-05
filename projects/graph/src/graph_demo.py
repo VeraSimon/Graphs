@@ -37,6 +37,8 @@ def main():
     graph.dft("4")
     print("Recursive DFT")
     graph.dft_rec("4")
+    print("BFS")
+    print(graph.bfs('1', '6'))
 
 
 if __name__ == '__main__':

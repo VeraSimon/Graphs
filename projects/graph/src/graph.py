@@ -88,7 +88,23 @@ class Graph:
         depth_recursion()
 
     def bfs(self, start_node, dest_node):
-        pass
+        q = deque()
+        visited = set()
+        q.append([start_node])
+
+        while len(q) > 0:
+            path = q.popleft()
+            vert = path[-1]
+            if vert not in visited:
+                visited.add(vert)
+                if vert == dest_node:
+                    return path
+                for peer in self.vertices[vert]:
+                    branch_path = list(path)
+                    branch_path.append(peer)
+                    q.append(branch_path)
 
     def dfs(self, start_node, dest_node):
-        pass
+        s = deque()
+        visited = set()
+        s.append(start_node)
