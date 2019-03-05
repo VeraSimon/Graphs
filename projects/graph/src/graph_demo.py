@@ -39,6 +39,8 @@ def main():
     graph.dft_rec("4")
     print("BFS")
     print(graph.bfs('1', '6'))
+    print("DFS")
+    print(graph.dfs('1', '6'))
 
 
 if __name__ == '__main__':

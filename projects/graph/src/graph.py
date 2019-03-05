@@ -108,3 +108,15 @@ class Graph:
         s = deque()
         visited = set()
         s.append(start_node)
+
+        while len(s) > 0:
+            path = s.pop()
+            vert = path[-1]
+            if vert not in visited:
+                visited.add(vert)
+                if vert == dest_node:
+                    return path
+                for peer in self.vertices[vert]:
+                    branch_path = list(path)
+                    branch_path.append(peer)
+                    s.append(branch_path)
