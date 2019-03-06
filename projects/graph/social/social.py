@@ -63,8 +63,9 @@ class SocialGraph:
         random.shuffle(possibleFriendships)
         # print(possibleFriendships[:20])
         # print(len(possibleFriendships))
-        for f in possibleFriendships[:20]:
-            self.friendships[f[0]].add(f[1])
+        for f in possibleFriendships[:numUsers * avgFriendships]:
+            # self.friendships[f[0]].add(f[1])
+            self.addFriendship(f[0], f[1])
 
     def getAllSocialPaths(self, userID):
         """
@@ -78,18 +79,32 @@ class SocialGraph:
         visited = {}  # Note that this is a dictionary, not a set
         # !!!! IMPLEMENT ME
 
-        s = deque()
-        s.append([userID])
+        # DFS shenanigans
+        # s = deque()
+        # s.append([userID])
 
-        while len(s) > 0:
-            path = s.pop()
+        # while len(s) > 0:
+        #     path = s.pop()
+        #     vert = path[-1]
+        #     if vert not in visited:
+        #         visited[vert] = path
+        #         for friend in self.friendships[vert]:
+        #             branch_path = list(path)
+        #             branch_path.append(friend)
+        #             s.append(branch_path)
+
+        q = deque()
+        q.append([userID])
+
+        while len(q) > 0:
+            path = q.popleft()
             vert = path[-1]
             if vert not in visited:
                 visited[vert] = path
                 for friend in self.friendships[vert]:
                     branch_path = list(path)
                     branch_path.append(friend)
-                    s.append(branch_path)
+                    q.append(branch_path)
 
         return visited
 
@@ -97,6 +112,8 @@ class SocialGraph:
 if __name__ == '__main__':
     sg = SocialGraph()
     sg.populateGraph(10, 2)
+    print("Friendships:")
     print(sg.friendships)
     connections = sg.getAllSocialPaths(1)
+    print("Connections:")
     print(connections)
