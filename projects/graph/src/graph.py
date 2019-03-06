@@ -107,7 +107,7 @@ class Graph:
     def dfs(self, start_node, dest_node):
         s = deque()
         visited = set()
-        s.append(start_node)
+        s.append([start_node])
 
         while len(s) > 0:
             path = s.pop()
