@@ -63,7 +63,7 @@ class SocialGraph:
         random.shuffle(possibleFriendships)
         # print(possibleFriendships[:20])
         # print(len(possibleFriendships))
-        for f in possibleFriendships[:numUsers * avgFriendships]:
+        for f in possibleFriendships[:(numUsers * avgFriendships) // 2]:
             # self.friendships[f[0]].add(f[1])
             self.addFriendship(f[0], f[1])
 
@@ -93,6 +93,7 @@ class SocialGraph:
         #             branch_path.append(friend)
         #             s.append(branch_path)
 
+        # BFS social paths
         q = deque()
         q.append([userID])
 
