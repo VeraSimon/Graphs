@@ -28,7 +28,6 @@ traversalPath = ['n', 's']
 
 
 
-
 # TRAVERSAL TEST
 visited_rooms = set()
 player.currentRoom = world.startingRoom
