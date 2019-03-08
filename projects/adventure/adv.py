@@ -67,6 +67,7 @@ class AdventureTraversal:
         s = deque()
         s.append(dir_to_move)
 
+        # TODO: Refactor towards `'?' in self.explored_graph[current_room].values()`
         while len(s) > 0:
             d = s.pop()
             self.explore_room(d)
@@ -76,10 +77,10 @@ class AdventureTraversal:
                     if self.explored_graph[self.rogue.currentRoom.id][ex] == '?':
                         s.append(ex)
 
-    def backtrack(self, room_id):
+    def backtrack(self):
         visited = set()
         q = deque()
-        q.append([room_id])
+        q.append([self.rogue.currentRoom.id])
 
         while len(q) > 0:
             path = q.popleft()
@@ -87,7 +88,15 @@ class AdventureTraversal:
             if current_room not in visited:
                 visited.add(current_room)
                 if '?' in self.explored_graph[current_room].values():
-                    return path
+                    previous_room = None
+                    for room_num in path.values():
+                        if previous_room == None:
+                            previous_room = room_num
+                            continue
+                        for k, v in self.explored_graph[room_num]:
+                            if self.explored_graph[room_num][k] == previous_room:
+                                self.explore_room(v)
+                                previous_room = room_num
                 for peer in self.explored_graph[current_room].values():
                     branch_path = list(path)
                     branch_path.append(peer)
@@ -107,7 +116,7 @@ class AdventureTraversal:
                     self.path_forward(ex)
                 # else, find the nearest room with an unexplored exit and travel there
                 else:
-                    self.backtrack(ex)
+                    self.backtrack()
                     # call BFS to find nearest unexplored
                     # convert room IDs to traversal path
                     # walk along that traversal path
