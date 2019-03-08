@@ -50,17 +50,16 @@ class AdventureTraversal:
 
     def explore_room(self, dirToMove):
         inverseDirections = {'n': 's', 's': 'n', 'e': 'w', 'w': 'e'}
-        p = self.rogue.currentRoom
-        self.previous_room = p.id
-        if dirToMove in p.getExits():
+        self.previous_room = self.rogue.currentRoom.id
+        if dirToMove in self.rogue.currentRoom.getExits():
             self.rogue.travel(dirToMove)
             self.traversal_path.append(dirToMove)
-            if p.id not in self.explored_graph:
-                self.explored_graph[p.id] = {
-                    ex: '?' for ex in p.getExits()}
+            if self.rogue.currentRoom.id not in self.explored_graph:
+                self.explored_graph[self.rogue.currentRoom.id] = \
+                    {ex: '?' for ex in self.rogue.currentRoom.getExits()}
             if self.explored_graph[self.previous_room][dirToMove] == '?':
-                self.explored_graph[self.previous_room][dirToMove] = p.id
-                self.explored_graph[p.id][inverseDirections[dirToMove]] = \
+                self.explored_graph[self.previous_room][dirToMove] = self.rogue.currentRoom.id
+                self.explored_graph[self.rogue.currentRoom.id][inverseDirections[dirToMove]] = \
                     self.previous_room
 
     def path_forward(self):
@@ -95,15 +94,20 @@ class AdventureTraversal:
                     q.append(branch_path)
 
     def traverse(self):
-
+        # Explore the starting room
         self.explored_graph[self.rogue.currentRoom.id] = {
             ex: '?' for ex in self.rogue.currentRoom.getExits()}
+
         # while the map is not completely explored
         while len(self.explored_graph) < len(self.room_graph):
+            cur_room = self.explored_graph[self.rogue.currentRoom.id]
             # for users current room
-
-                # update the graph entry for the previous room
-            # if there is an unexplored exit in the current room, travel in that direction
+            for ex in cur_room.items():
+                # if there is an unexplored exit in the current room, travel in that direction
+                if ex == '?':
+                    # update the graph entry for the previous room
+                    # self.explore_room(ex)
+                    pass
             # else, find the nearest room with an unexplored exit and travel there
                 # call BFS to find nearest unexplored
                 # convert room IDs to traversal path
