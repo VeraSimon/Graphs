@@ -45,39 +45,80 @@ class AdventureTraversal:
     # player.currentRoom.getExits() - Returns an array of existing cardinal points for a room
     # player.travel(direction) - Moves in a given cardinal direction if possible
 
-    def __init__(self, adventurer, traversal_path, room_graph):
+    def __init__(self, adventurer, room_graph, traversal_path=[]):
         self.adv = adventurer
         self.adv_route = traversal_path
         self.dungeon_map = {}
         self.dungeon = room_graph
 
     def explore_room(self, previous_room=None, entered_dir=None):
+        '''
+        Explores the current room the player (self.adv) is in. If passed info
+        about the previous room and the direction entered from, will note them
+        in the player map (self.dungeon_map).
+        '''
         inverse_dirs = {'n': 's', 's': 'n', 'e': 'w', 'w': 'e'}
         current_room = self.adv.currentRoom.id
+        # If the room isn't in self.dungeon_map yet, map out the exits. Useful
+        # for mapping the starting room.
         if current_room not in self.dungeon_map:
             self.dungeon_map[current_room] = \
                 {ex: '?' for ex in self.adv.currentRoom.getExits()}
+        # If we've been passed the previous room and the direction traveled
+        # from there to here, map the exits traversed between the two rooms if
+        # needed.
         if previous_room != None and entered_dir != None:
             if self.dungeon_map[previous_room][entered_dir] == '?':
                 inv_dir = inverse_dirs[entered_dir]
                 self.dungeon_map[previous_room][entered_dir] = current_room
                 self.dungeon_map[current_room][inv_dir] = previous_room
+            # Since we know we've moved between two rooms, add the move to
+            # self.adv_route (traversalPath).
             self.adv_route.append(entered_dir)
 
-    def path_forward(self):
-        pass
+    def path_forward(self, dir_to_move):
+        '''
+        __Notes__
+        So instead of a stack like we'd use in a typical DFT, we're
+        basically using the existence of an unexplored exit in a room as a
+        kind of pseudo-stack, going on until we hit a room without an
+        unexplored exit in it. Also, instead of our typical visited set, we
+        can use self.dungeon_map and self.explore_room in its place.
+        self.adv.currentRoom.id can act as our starting node.
+        '''
+        # while '?' in self.dungeon_map[self.adv.currentRoom.id].values(), do a DFT
+        while '?' in self.dungeon_map[self.adv.currentRoom.id].values():
+            # previous_room = self.adv.currentRoom.id
+            # self.adv.travel(dir_to_move)
+            # self.explore_room(previous_room, dir_to_move)
+
+            pass
 
     def path_back(self):
-        pass
+        # while '?' not in self.dungeon_map[self.adv.currentRoom.id].values(), do a BFS
+        while '?' not in self.dungeon_map[self.adv.currentRoom.id].values():
+            pass
 
     def traverse(self):
-        # Pick an unexplored direction
-        # DFT in direction of unexplored room
-        # When hitting a dead end during a DFT
+        # TODO: Check if we have a partial self.adv_route (traversalPath), and
+        # walk any passed in partial path.
+
+        # Explore the starting room
+        self.explore_room()
+        # Set our base finish case
+        while len(self.dungeon_map) < len(self.dungeon):
+            # Pick an unexplored direction
+            for ex in self.adv.currentRoom.getExits():
+                if ex == '?':
+                    # DFT in direction of unexplored room
+                    self.path_forward(ex)
+            # When hitting a dead end during a DFT, do a BFS
+            self.path_back()
+        # Spit out the traversalPath
         return self.adv_route
 
 
-pathfinder = AdventureTraversal(player, traversalPath, roomGraph)
+pathfinder = AdventureTraversal(player, roomGraph, traversalPath)
 traversalPath = pathfinder.traverse()
 
 # TRAVERSAL TEST
