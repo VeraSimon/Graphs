@@ -45,11 +45,12 @@ class AdventureTraversal:
     # player.currentRoom.getExits() - Returns an array of existing cardinal points for a room
     # player.travel(direction) - Moves in a given cardinal direction if possible
 
-    def __init__(self, adventurer, room_graph, traversal_path=[]):
+    def __init__(self, adventurer, room_graph, traversal_path=[], debug=False):
         self.adv = adventurer
         self.adv_route = traversal_path
         self.dungeon_map = {}
         self.dungeon = room_graph
+        self.debug = debug
 
     def explore_room(self, previous_room=None, entered_dir=None):
         '''
@@ -59,6 +60,11 @@ class AdventureTraversal:
         '''
         inverse_dirs = {'n': 's', 's': 'n', 'e': 'w', 'w': 'e'}
         current_room = self.adv.currentRoom.id
+        if self.debug == True:
+            print(f'Previous room: {previous_room}')
+            print(f'Current room: {current_room}')
+            if entered_dir in inverse_dirs:
+                print(f'Entered current from: {inverse_dirs[entered_dir]}')
         # If the room isn't in self.dungeon_map yet, map out the exits. Useful
         # for mapping the starting room.
         if current_room not in self.dungeon_map:
@@ -75,6 +81,8 @@ class AdventureTraversal:
             # Since we know we've moved between two rooms, add the move to
             # self.adv_route (traversalPath).
             self.adv_route.append(entered_dir)
+        if self.debug == True:
+            print(f'Explored: {self.dungeon_map}\n')
 
     def path_forward(self, dir_to_move):
         '''
@@ -86,13 +94,29 @@ class AdventureTraversal:
         can use self.dungeon_map and self.explore_room in its place.
         self.adv.currentRoom.id can act as our starting node.
         '''
+
+        # Get the ball rolling by taking the first step on the traversal path
+        # with the given direction.
+        previous_room = self.adv.currentRoom.id
+        self.adv.travel(dir_to_move)
+        self.explore_room(previous_room, dir_to_move)
+
         # while '?' in self.dungeon_map[self.adv.currentRoom.id].values(), do a DFT
         while '?' in self.dungeon_map[self.adv.currentRoom.id].values():
-            # previous_room = self.adv.currentRoom.id
-            # self.adv.travel(dir_to_move)
-            # self.explore_room(previous_room, dir_to_move)
+            # Get our next direction to move in. Can probably be simplified,
+            # but I'm on a time limit.
+            to_move = None
+            for ex in self.dungeon_map[self.adv.currentRoom.id].keys():
+                if self.dungeon_map[self.adv.currentRoom.id][ex] == '?':
+                    if self.debug == True:
+                        print(f'Forward pathing exit: {ex}')
+                    to_move = ex
+                    break
 
-            pass
+            # Step along the path until we get to a room without unexplored exits
+            previous_room = self.adv.currentRoom.id
+            self.adv.travel(to_move)
+            self.explore_room(previous_room, to_move)
 
     def path_back(self):
         # while '?' not in self.dungeon_map[self.adv.currentRoom.id].values(), do a BFS
@@ -109,16 +133,19 @@ class AdventureTraversal:
         while len(self.dungeon_map) < len(self.dungeon):
             # Pick an unexplored direction
             for ex in self.adv.currentRoom.getExits():
-                if ex == '?':
+                if self.dungeon_map[self.adv.currentRoom.id][ex] == '?':
+                    if self.debug == True:
+                        print(f'Initial forward exit: {ex}')
                     # DFT in direction of unexplored room
                     self.path_forward(ex)
+                    break
             # When hitting a dead end during a DFT, do a BFS
             self.path_back()
         # Spit out the traversalPath
         return self.adv_route
 
 
-pathfinder = AdventureTraversal(player, roomGraph, traversalPath)
+pathfinder = AdventureTraversal(player, roomGraph, traversalPath, True)
 traversalPath = pathfinder.traverse()
 
 # TRAVERSAL TEST
