@@ -31,7 +31,10 @@ roomGraph = {0: [(3, 5), {'n': 1, 's': 5, 'e': 3, 'w': 7}], 1: [(3, 6), {'s': 0,
 world.loadGraph(roomGraph)
 player = Player("Name", world.startingRoom)
 
-world.printRooms()
+debugger = True
+
+if debugger == True:
+    world.printRooms()
 
 
 # FILL THIS IN
@@ -97,6 +100,8 @@ class AdventureTraversal:
 
         # Get the ball rolling by taking the first step on the traversal path
         # with the given direction.
+        if self.debug == True:
+            print(f'Forward initial exit: {dir_to_move}')
         previous_room = self.adv.currentRoom.id
         self.adv.travel(dir_to_move)
         self.explore_room(previous_room, dir_to_move)
@@ -127,6 +132,8 @@ class AdventureTraversal:
         # TODO: Check if we have a partial self.adv_route (traversalPath), and
         # walk any passed in partial path.
 
+        if self.debug == True:
+            print(f'~~ Starting room ~~')
         # Explore the starting room
         self.explore_room()
         # Set our base finish case
@@ -134,18 +141,18 @@ class AdventureTraversal:
             # Pick an unexplored direction
             for ex in self.adv.currentRoom.getExits():
                 if self.dungeon_map[self.adv.currentRoom.id][ex] == '?':
-                    if self.debug == True:
-                        print(f'Initial forward exit: {ex}')
                     # DFT in direction of unexplored room
                     self.path_forward(ex)
                     break
             # When hitting a dead end during a DFT, do a BFS
             self.path_back()
+            if self.debug == True:
+                print(f'Current traversal path: {self.adv_route}')
         # Spit out the traversalPath
         return self.adv_route
 
 
-pathfinder = AdventureTraversal(player, roomGraph, traversalPath, True)
+pathfinder = AdventureTraversal(player, roomGraph, traversalPath, debugger)
 traversalPath = pathfinder.traverse()
 
 # TRAVERSAL TEST
